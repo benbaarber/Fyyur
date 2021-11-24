@@ -2,18 +2,19 @@ from datetime import datetime
 from flask_wtf import Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
 from wtforms.validators import DataRequired, AnyOf, URL, ValidationError
-from models import Artist, Venue, db
 
-class Unique(object):
-    def __init__(self, model, field, message='This name has already been taken.'):
-        self.model = model
-        self.field = field
+# Below is an attempt at implementing a custom validation. Please ignore as I am only keeping this for future reference.
 
-    def __call__(self, form, field):
-        if not field.raw_data:
-            check = self.model.query.filter(self.field == field.data).first()
-            if check:
-                raise ValidationError(self.message)
+# class Unique(object):
+#     def __init__(self, model, field, message='This name has already been taken.'):
+#         self.model = model
+#         self.field = field
+
+#     def __call__(self, form, field):
+#         if not field.raw_data:
+#             check = self.model.query.filter(self.field == field.data).first()
+#             if check:
+#                 raise ValidationError(self.message)
 
 class ShowForm(Form):
     artist_id = StringField(
@@ -30,7 +31,7 @@ class ShowForm(Form):
 
 class VenueForm(Form):
     name = StringField(
-        'name', validators=[DataRequired(), Unique(Venue, Venue.name)]
+        'name', validators=[DataRequired()]
     )
     city = StringField(
         'city', validators=[DataRequired()]
@@ -98,7 +99,7 @@ class VenueForm(Form):
         'phone'
     )
     image_link = StringField(
-        'image_link'
+        'image_link', validators=[URL()]
     )
     genres = SelectMultipleField(
         # TODO implement enum restriction
@@ -208,7 +209,7 @@ class ArtistForm(Form):
         'phone'
     )
     image_link = StringField(
-        'image_link'
+        'image_link', validators=[URL()]
     )
     genres = SelectMultipleField(
         'genres', validators=[DataRequired()],
